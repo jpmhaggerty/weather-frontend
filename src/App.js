@@ -1,18 +1,28 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import BasicCard from "./components/BasicCard";
+import ClippedDrawer from "./components/ClipperDrawer";
 
 const axios = require("axios");
 
-const dataURI = "http://localhost:3001/api/";
+const dataUrl = "http://localhost:3001/api/";
 
 function App() {
   const [dataFeed, setDataFeed] = useState([]);
 
+  const handleDataSwitch = (event) => {
+    if (event.target.checked) {
+    fetch("http://localhost:3001/data/on")
+      .then()
+    } else {
+      fetch("http://localhost:3001/data/off")
+      .then()
+    }
+  };
+
   useEffect(() => {
-    const getDataFeed = () => {
+    const getDataFeed = (url) => {
       axios
-        .get(dataURI)
+        .get(url)
         .then((response) => {
           if (response.status >= 400) {
             setDataFeed([]);
@@ -27,16 +37,17 @@ function App() {
         });
     };
 
-    getDataFeed();
-  }, []);
-
-  let weatherForecast = dataFeed.map((element) => {
-    return <BasicCard key={element.number} dataFeed={element} />;
-  });
+    getDataFeed(dataUrl);
+  }, [handleDataSwitch]);
 
   return (
     <div className="App">
-      <header className="App-header">{weatherForecast}</header>
+      <header className="App-header">
+        <ClippedDrawer
+          dataFeed={dataFeed}
+          handleDataSwitch={handleDataSwitch}
+        />
+      </header>
     </div>
   );
 }
