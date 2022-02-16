@@ -17,10 +17,23 @@ import StickyHeadTable from "./StickyHeadTable";
 import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import ColorRadioButtons from "./ColorRadioButtons";
 import StatusConsole from "./StatusConsole";
+import Grid from "@mui/material/Grid";
 
 const drawerWidth = 240;
+
+const shortTemp = [
+  { name: "LIG", status: false },
+  { name: "SEF", status: true },
+  { name: "CML", status: false },
+  { name: "ATT", status: false },
+  { name: "DET", status: false },
+  { name: "DBR", status: false },
+  { name: "DTB", status: false },
+  { name: "THK", status: false },
+  { name: "SMK", status: false },
+  { name: "TRB", status: false },
+];
 
 export default function ClippedDrawer({ dataFeed, handleDataSwitch }) {
   let weatherForecast = dataFeed.map((element) => {
@@ -32,31 +45,63 @@ export default function ClippedDrawer({ dataFeed, handleDataSwitch }) {
     );
   });
 
+  const handleInfo = (tag) => {
+    console.log("More info requested for", tag);
+  };
+
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      <Box
+        sx={{
+          display: "inline-flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          m: 2,
+        }}
       >
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Lightning Launch Commit Criteria
-          </Typography>
-          <FormGroup aria-label="position" row>
-            <FormControlLabel
-              value="top"
-              control={<Switch color="warning" />}
-              label="Data Feed"
-              labelPlacement="top"
-              onChange={(event) => {
-                handleDataSwitch(event);
-              }}
-            />
-          </FormGroup>
-          <StatusConsole />
-        </Toolbar>
-      </AppBar>
+        <AppBar
+          position="fixed"
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
+          <Toolbar>
+            {/* <Grid
+            container
+            spacing={2}
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Grid item xs> */}
+            <Typography variant="h6" noWrap component="div">
+              Lightning Launch Commit Criteria
+            </Typography>
+            {/* </Grid>
+            <Grid item xs={6}> */}
+            <StatusConsole shortRules={shortTemp} handleInfo={handleInfo} />
+            {/* </Grid>
+            <Grid item xs> */}
+            <FormGroup aria-label="position" row>
+              <FormControlLabel
+                value="top"
+                control={<Switch color="warning" />}
+                label="Data Feed"
+                labelPlacement="top"
+                onChange={(event) => {
+                  handleDataSwitch(event);
+                }}
+              />
+            </FormGroup>
+            {/* </Grid>
+          </Grid> */}
+          </Toolbar>
+        </AppBar>
+      </Box>
       <Drawer
         variant="permanent"
         sx={{
