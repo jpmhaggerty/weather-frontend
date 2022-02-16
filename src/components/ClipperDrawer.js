@@ -17,6 +17,8 @@ import StickyHeadTable from "./StickyHeadTable";
 import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import ColorRadioButtons from "./ColorRadioButtons";
+import StatusConsole from "./StatusConsole";
 
 const drawerWidth = 240;
 
@@ -47,9 +49,12 @@ export default function ClippedDrawer({ dataFeed, handleDataSwitch }) {
               control={<Switch color="warning" />}
               label="Data Feed"
               labelPlacement="top"
-              onChange={(event) => {handleDataSwitch(event)}}
+              onChange={(event) => {
+                handleDataSwitch(event);
+              }}
             />
           </FormGroup>
+          <StatusConsole />
         </Toolbar>
       </AppBar>
       <Drawer
