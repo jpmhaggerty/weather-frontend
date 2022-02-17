@@ -22,7 +22,7 @@ export default function StickyHeadTable({ dataFeed }) {
         return {
           id: element,
           label: element,
-          minWidth: 100,
+          minWidth: 50,
           align: "right",
           format: (value) => value.toLocaleString("en-US"),
         };
@@ -31,7 +31,7 @@ export default function StickyHeadTable({ dataFeed }) {
       columns = [{
         id: "spacer",
         label: "Spacer",
-        minWidth: 100,
+        minWidth: 50,
         align: "right",
         format: (value) => value.toLocaleString("en-US"),
       }];
