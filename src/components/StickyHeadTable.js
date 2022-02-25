@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 
 let columns;
 let rows;
+let tableName = "Weather Data";
 
 export default function StickyHeadTable({ dataFeed }) {
   const [page, setPage] = React.useState(0);
@@ -28,13 +29,15 @@ export default function StickyHeadTable({ dataFeed }) {
         };
       });
     } else {
-      columns = [{
-        id: "spacer",
-        label: "Spacer",
-        minWidth: 50,
-        align: "right",
-        format: (value) => value.toLocaleString("en-US"),
-      }];
+      columns = [
+        {
+          id: "spacer",
+          label: "Spacer",
+          minWidth: 50,
+          align: "right",
+          format: (value) => value.toLocaleString("en-US"),
+        },
+      ];
     }
   };
 
@@ -52,9 +55,14 @@ export default function StickyHeadTable({ dataFeed }) {
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 500 }}>
+      <TableContainer sx={{ maxHeight: 800 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
+            <TableRow>
+              <TableCell align="center" colSpan={columns.length}>
+                <h2>{tableName}</h2>
+              </TableCell>
+            </TableRow>
             <TableRow>
               {columns.map((column) => (
                 <TableCell

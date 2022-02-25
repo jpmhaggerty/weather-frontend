@@ -1,28 +1,26 @@
 import * as React from "react";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
 import { red, green, yellow } from "@mui/material/colors";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import BoltIcon from "@mui/icons-material/Bolt";
 import InfoTwoToneIcon from "@mui/icons-material/InfoTwoTone";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 const shortDefault = [
-  { name: "LIG", status: false },
-  { name: "SEF", status: false },
-  { name: "CML", status: false },
-  { name: "ATT", status: false },
-  { name: "DET", status: false },
-  { name: "DBR", status: false },
-  { name: "DTB", status: false },
-  { name: "THK", status: false },
-  { name: "SMK", status: false },
-  { name: "TRB", status: false },
+  { name: "LIG", fullName: "Lightning", status: false },
+  { name: "SEF", fullName: "Surface Electric Field Mill", status: false },
+  { name: "CML", fullName: "Cumulus Cloud", status: false },
+  { name: "ATT", fullName: "Attached Cloud", status: false },
+  { name: "DET", fullName: "Detached Cloud", status: false },
+  { name: "DBR", fullName: "Debris Cloud", status: false },
+  { name: "DTB", fullName: "Disturbed Cloud", status: false },
+  { name: "THK", fullName: "Thick Cloud", status: false },
+  { name: "SMK", fullName: "Smoke", status: false },
+  { name: "TRB", fullName: "Triboelectricity", status: false },
 ];
 
 export default function StatusConsole({
-  shortRules = shortDefault,
+  ruleStatus = shortDefault,
   handleInfo,
 }) {
   return (
@@ -34,7 +32,7 @@ export default function StatusConsole({
         m: 2,
       }}
     >
-      {shortRules.map((element, index) => {
+      {ruleStatus.map((element, index) => {
         return (
           <Chip
             key={index}

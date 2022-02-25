@@ -9,6 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
+import ApiIcon from '@mui/icons-material/Api';
 import { Link } from "react-router-dom";
 import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 
@@ -63,6 +64,18 @@ export default function TempDrawer() {
             </ListItemButton>
           </ListItem>
         </Link>
+
+        <Link to="/api" style={{ textDecoration: "none", color: "black" }}>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <ApiIcon />
+              </ListItemIcon>
+              <ListItemText primary="API Admin" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+
       </List>
       <Divider />
     </Box>

@@ -15,30 +15,27 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 const shortTemp = [
-  { name: "LIG", status: false },
-  { name: "SEF", status: true },
-  { name: "CML", status: false },
-  { name: "ATT", status: false },
-  { name: "DET", status: false },
-  { name: "DBR", status: false },
-  { name: "DTB", status: false },
-  { name: "THK", status: false },
-  { name: "SMK", status: false },
-  { name: "TRB", status: false },
+  { name: "LIG", fullName: "Lightning", status: false },
+  { name: "SEF", fullName: "Surface Electric Field Mill", status: true },
+  { name: "CML", fullName: "Cumulus Cloud", status: false },
+  { name: "ATT", fullName: "Attached Cloud", status: false },
+  { name: "DET", fullName: "Detached Cloud", status: true },
+  { name: "DBR", fullName: "Debris Cloud", status: true },
+  { name: "DTB", fullName: "Disturbed Cloud", status: false },
+  { name: "THK", fullName: "Thick Cloud", status: false },
+  { name: "SMK", fullName: "Smoke", status: true },
+  { name: "TRB", fullName: "Triboelectricity", status: false },
 ];
 
-export default function ButtonAppBar({
+export default function LLCCAppBar({
   darkMode,
   setDarkMode,
   dataFeed,
   handleDataSwitch,
+  handleInfo,
 }) {
   const handleDarkMode = () => {
     setDarkMode(!darkMode);
-  };
-
-  const handleInfo = (tag) => {
-    console.log("More info requested for", tag);
   };
 
   return (
@@ -66,7 +63,7 @@ export default function ButtonAppBar({
             </Link>
           </Typography>
 
-          <StatusConsole shortRules={shortTemp} handleInfo={handleInfo} />
+          <StatusConsole ruleStatus={shortTemp} handleInfo={handleInfo} />
 
           <Tooltip
             title={<Typography fontSize={15}>Light/Dark Mode</Typography>}
@@ -105,7 +102,7 @@ export default function ButtonAppBar({
           </Link>
 
           <Link
-            to="/datafeeds"
+            to="/api"
             style={{ textDecoration: "none", color: "white" }}
           >
             <Button
@@ -113,7 +110,7 @@ export default function ButtonAppBar({
               sx={{ backgroundColor: "#123540", ml: 1 }}
             >
               {" "}
-              Data Feeds
+              Data Admin
             </Button>
           </Link>
           <Tooltip
