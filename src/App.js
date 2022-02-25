@@ -17,7 +17,7 @@ const dataUrlOn = "http://localhost:3001/on/";
 const dataUrlOff = "http://localhost:3001/off/";
 
 const shortTemp = [
-  { name: "LIG", fullName: "Lightning", status: false, active: false },
+  { name: "LIG", fullName: "Lightning", status: true, active: false },
   {
     name: "SEF",
     fullName: "Surface Electric Field Mill",
