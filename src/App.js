@@ -1,6 +1,14 @@
-import "./App.css";
+import * as React from "react";
 import { useState, useEffect } from "react";
-import ClippedDrawer from "./components/ClipperDrawer";
+import { Routes, Route } from "react-router-dom";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import "./App.css";
+import ButtonAppBar from "./components/ButtonAppBar.js";
+import Documents from "./components/Documents";
+import Home from "./components/Home";
+// import ClippedDrawer from "./components/ClipperDrawer";
 
 const axios = require("axios");
 
@@ -8,14 +16,25 @@ const dataUrl = "http://localhost:3001/api/";
 
 function App() {
   const [dataFeed, setDataFeed] = useState([]);
+  const [darkMode, setDarkMode] = useState();
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+      primary: {
+        main: "#123548",
+      },
+    },
+    typography: {
+      fontFamily: ["Open Sans"],
+    },
+  });
 
   const handleDataSwitch = (event) => {
     if (event.target.checked) {
-    fetch("http://localhost:3001/data/on")
-      .then()
+      fetch("http://localhost:3001/data/on").then();
     } else {
-      fetch("http://localhost:3001/data/off")
-      .then()
+      fetch("http://localhost:3001/data/off").then();
     }
   };
 
@@ -39,16 +58,31 @@ function App() {
 
     getDataFeed(dataUrl);
   }, [handleDataSwitch]);
+  // }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <ClippedDrawer
-          dataFeed={dataFeed}
-          handleDataSwitch={handleDataSwitch}
-        />
-      </header>
-    </div>
+    <React.Fragment>
+      <ThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme>
+          <div className="App">
+            <header className="App-header">
+              <ButtonAppBar
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                dataFeed={dataFeed}
+                handleDataSwitch={handleDataSwitch}
+              />
+            </header>
+            <main className="App-main">
+              <Routes>
+                <Route path="/documents" element={<Documents />} />
+                <Route path="/" element={<Home dataFeed={dataFeed} />} />
+              </Routes>
+            </main>
+          </div>
+        </CssBaseline>
+      </ThemeProvider>
+    </React.Fragment>
   );
 }
 
