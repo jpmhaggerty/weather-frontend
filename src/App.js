@@ -60,7 +60,6 @@ function App() {
   }, []);
 
   const handleInfo = (tag) => {
-    console.log("More info requested for", tag);
     let newRuleStatus = [];
     for (let i = 0; i < ruleStatus.length; i++) {
       if (ruleStatus[i].name === tag) {
@@ -70,7 +69,6 @@ function App() {
       }
     }
     setRuleStatus(newRuleStatus);
-    console.log("Rulestate: ", ruleStatus);
   };
 
   useEffect(() => {
