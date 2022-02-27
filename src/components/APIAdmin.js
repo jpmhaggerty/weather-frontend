@@ -2,25 +2,15 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import fetch from "cross-fetch";
-
-const stubSources = {
-  dataUrlMill: "https://api.weather.gov/gridpoints/MLB/46,69/forecast",
-  periodMill: 11000,
-  dataUrlCloud: "https://api.weather.gov/gridpoints/MLB/51,69/forecast",
-  periodCloud: 12000,
-  dataUrlLightning: "https://api.weather.gov/gridpoints/MLB/56,69/forecast",
-  periodLightning: 13000,
-};
+import CustomizedTextField from "./CustomizedTextField";
 
 export default function APIAdmin() {
-  //get the urls for the mills and clouds from the backend
-  //display urls with user edit
-  //test the urls and show results
-  //put the urls to the backend
+  //get the urls for the mills and clouds from the backend - check
+  //display urls with user edit - check
+  //test the urls and show results - to do
+  //put the urls to the backend - check
 
-  const [apiResponse, setApiResponse] = useState();
   const [dataUrlCloud, setDataUrlCloud] = useState();
   const [dataUrlLightning, setDataUrlLightning] = useState();
   const [dataUrlMill, setDataUrlMill] = useState();
@@ -28,8 +18,44 @@ export default function APIAdmin() {
   const [periodLightning, setPeriodLightning] = useState();
   const [periodMill, setPeriodMill] = useState();
 
-  const handleDataPush = (source, action) => {
-    let payloadData = {
+  const handleTextChange = (event) => {
+    switch (event.target.name) {
+      case "cloud/url": {
+        setDataUrlCloud(event.target.value);
+        break;
+      }
+      case "cloud/period": {
+        setPeriodCloud(event.target.value);
+        break;
+      }
+      case "lightning/url": {
+        setDataUrlLightning(event.target.value);
+        break;
+      }
+      case "lightning/period": {
+        setPeriodLightning(event.target.value);
+        break;
+      }
+      case "mill/url": {
+        setDataUrlMill(event.target.value);
+        break;
+      }
+      case "mill/period": {
+        setPeriodMill(event.target.value);
+        break;
+      }
+      default: {
+        console.log("No data pulled for ", event.target.name);
+      }
+    }
+  };
+
+  const handleUpload = () => {
+    putAPIData("all/update");
+  };
+
+  const putAPIData = async (source) => {
+    let payload = {
       dataUrlMill: dataUrlMill,
       periodMill: periodMill,
       dataUrlCloud: dataUrlCloud,
@@ -37,12 +63,8 @@ export default function APIAdmin() {
       dataUrlLightning: dataUrlLightning,
       periodLightning: periodLightning,
     };
-    putAPIData(`http://localhost:3001/data/${source}/${action}`, payloadData);
-  };
 
-  const putAPIData = async (url, payload = stubSources) => {
-    // `http://localhost:3001/data/${source}/${action}`
-    const response = await fetch(url, {
+    const response = await fetch(`http://localhost:3001/data/${source}`, {
       method: "PUT",
       mode: "cors",
       headers: {
@@ -53,33 +75,55 @@ export default function APIAdmin() {
     const result = await response.json();
   };
 
-  useEffect(() => {
-    const getAPIData = async (source, action) => {
-      try {
-        const response = await fetch(
-          `http://localhost:3001/api/${source}/${action}`
-        );
-        const json = await response.json();
-        if (action === "url") {
-          source === "cloud" ? setDataUrlCloud(json) : console.log();
-          source === "lightning" ? setDataUrlLightning(json) : console.log();
-          source === "mill" ? setDataUrlMill(json) : console.log();
-        } else if (action === "period") {
-          source === "cloud" ? setPeriodCloud(json) : console.log();
-          source === "lightning" ? setPeriodLightning(json) : console.log();
-          source === "mill" ? setPeriodMill(json) : console.log();
+  const getAPIData = async (source) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/${source}`);
+      const json = await response.json();
+      switch (source) {
+        case "cloud/url": {
+          setDataUrlCloud(json);
+          break;
         }
-      } catch (error) {
-        console.log("error", error);
+        case "cloud/period": {
+          setPeriodCloud(json);
+          break;
+        }
+        case "lightning/url": {
+          setDataUrlLightning(json);
+          break;
+        }
+        case "lightning/period": {
+          setPeriodLightning(json);
+          break;
+        }
+        case "mill/url": {
+          setDataUrlMill(json);
+          break;
+        }
+        case "mill/period": {
+          setPeriodMill(json);
+          break;
+        }
+        default: {
+          console.log("No data pulled for ", source);
+        }
       }
-    };
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
-    getAPIData("cloud", "url");
-    getAPIData("lightning", "url");
-    getAPIData("mill", "url");
-    getAPIData("cloud", "period");
-    getAPIData("lightning", "period");
-    getAPIData("mill", "period");
+  const handleRefresh = () => {
+    getAPIData("cloud/url");
+    getAPIData("cloud/period");
+    getAPIData("lightning/url");
+    getAPIData("lightning/period");
+    getAPIData("mill/url");
+    getAPIData("mill/period");
+  };
+
+  useEffect(() => {
+    handleRefresh();
   }, []);
 
   return (
@@ -92,64 +136,62 @@ export default function APIAdmin() {
       autoComplete="off"
     >
       <Box>
-        <TextField
-          color="warning"
-          id="url-cloud"
-          label="Cloud URL"
-          variant="filled"
+        <CustomizedTextField
+          name="cloud/url"
           value={dataUrlCloud}
-          sx={{ width: 400, input: { color: "yellow", bgcolor: "gray" } }}
+          label="Cloud URL"
+          handleTextChange={handleTextChange}
         />
-        <TextField
-          color="warning"
-          id="url-cloud"
-          label="Cloud Period"
-          variant="filled"
+        <CustomizedTextField
+          name="cloud/period"
           value={periodCloud}
-          sx={{ input: { color: "yellow", bgcolor: "gray" } }}
+          label="Cloud Period (ms)"
+          handleTextChange={handleTextChange}
         />
       </Box>
       <Box>
-        <TextField
-          color="warning"
-          id="url-lightning"
-          label="Lightning URL"
-          variant="filled"
+        <CustomizedTextField
+          name="lightning/url"
           value={dataUrlLightning}
-          sx={{ width: 400, input: { color: "yellow", bgcolor: "gray" } }}
+          label="Lightning URL"
+          handleTextChange={handleTextChange}
         />
-        <TextField
-          color="warning"
-          id="url-lightning"
-          label="Lightning Period"
-          variant="filled"
+        <CustomizedTextField
+          name="lightning/period"
           value={periodLightning}
-          sx={{ input: { color: "yellow", bgcolor: "gray" } }}
+          label="Lightning Period (ms)"
+          handleTextChange={handleTextChange}
         />
       </Box>
       <Box>
-        <TextField
-          color="warning"
-          id="url-mill"
-          label="Mill URL"
-          variant="filled"
+        <CustomizedTextField
+          name="mill/url"
           value={dataUrlMill}
-          sx={{ width: 400, input: { color: "yellow", bgcolor: "gray" } }}
+          label="Mill URL"
+          handleTextChange={handleTextChange}
         />
-        <TextField
-          color="warning"
-          id="url-mill"
-          label="Mill Period"
-          variant="filled"
+        <CustomizedTextField
+          name="mill/period"
           value={periodMill}
-          sx={{ input: { color: "yellow", bgcolor: "gray" } }}
+          label="Mill Period (ms)"
+          handleTextChange={handleTextChange}
         />
       </Box>
+
       <Button
-        onClick={handleDataPush("mill", "url")}
+        name="upload"
+        onClick={handleUpload}
         sx={{ color: "yellow", bgcolor: "gray" }}
       >
         Upload
+      </Button>
+
+      <Button
+        name="refresh"
+        onClick={handleRefresh}
+        sx={{ color: "yellow", bgcolor: "gray" }}
+      >
+        Refresh
       </Button>
     </Box>
   );
