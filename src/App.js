@@ -9,12 +9,21 @@ import LLCCAppBar from "./components/LLCCAppBar";
 import Documents from "./components/Documents";
 import Home from "./components/Home";
 import APIAdmin from "./components/APIAdmin";
+import fetch from "cross-fetch";
+import Button from "@mui/material/Button";
 
 const axios = require("axios");
 
-const dataUrl = "http://localhost:3001/api/";
-const dataUrlOn = "http://localhost:3001/on/";
-const dataUrlOff = "http://localhost:3001/off/";
+const dataUrl = "http://localhost:3001/api/lightning";
+const dataUrlCloud = "http://localhost:3001/api/cloud/";
+const dataUrlCloudOn = "http://localhost:3001/data/cloud/on/";
+const dataUrlCloudOff = "http://localhost:3001/data/cloud/off/";
+const dataUrlLightning = "http://localhost:3001/api/lightning/";
+const dataUrlLightningOn = "http://localhost:3001/data/lightning/on/";
+const dataUrlLightningOff = "http://localhost:3001/data/lightning/off/";
+const dataUrlMill = "http://localhost:3001/api/mill/";
+const dataUrlMillOn = "http://localhost:3001/data/mill/on/";
+const dataUrlMillOff = "http://localhost:3001/data/mill/off/";
 
 const shortTemp = [
   { name: "LIG", fullName: "Lightning", status: true, active: false },
@@ -36,6 +45,9 @@ const shortTemp = [
 
 function App() {
   const [dataFeed, setDataFeed] = useState([]);
+  const [dataFeedCloud, setDataFeedCloud] = useState([]);
+  const [dataFeedLightning, setDataFeedLightning] = useState([]);
+  const [dataFeedMill, setDataFeedMill] = useState([]);
   const [darkMode, setDarkMode] = useState();
   const [ruleStatus, setRuleStatus] = useState(shortTemp);
 
@@ -52,10 +64,21 @@ function App() {
   });
 
   const handleDataSwitch = useCallback((event) => {
+    let putParameters = {
+      method: "PUT",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
     if (event.target.checked) {
-      fetch(dataUrlOn).then();
+      fetch(dataUrlCloudOn, putParameters).then();
+      fetch(dataUrlLightningOn, putParameters).then();
+      fetch(dataUrlMillOn, putParameters).then();
     } else {
-      fetch(dataUrlOff).then();
+      fetch(dataUrlCloudOff, putParameters).then();
+      fetch(dataUrlLightningOff, putParameters).then();
+      fetch(dataUrlMillOff, putParameters).then();
     }
   }, []);
 
@@ -71,26 +94,69 @@ function App() {
     setRuleStatus(newRuleStatus);
   };
 
-  useEffect(() => {
-    const getDataFeed = (url) => {
-      axios
-        .get(url)
-        .then((response) => {
-          if (response.status >= 400) {
-            setDataFeed([]);
-            throw new Error("Bad response from server");
-          }
-          setDataFeed(
-            response.data.sort((first, second) => first.number - second.number)
-          );
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
+  // useEffect(() => {
+  //   let dataFeed;
+  //   const getDataFeed = (url) => {
+  //     axios
+  //       .get(url)
+  //       .then((response) => {
+  //         if (response.status >= 400) {
+  //           dataFeed = [];
+  //           throw new Error("Bad response from server");
+  //         }
+  //         dataFeed = response.data.sort(
+  //           (first, second) => first.number - second.number
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         console.error(error);
+  //       });
+  //   };
 
-    getDataFeed(dataUrl);
-  }, [handleDataSwitch]);
+  //   getDataFeed(dataUrlCloud);
+  //   setDataFeedCloud(dataFeed);
+  //   getDataFeed(dataUrlLightning);
+  //   setDataFeedLightning(dataFeed);
+  //   getDataFeed(dataUrlMill);
+  //   setDataFeedMill(dataFeed);
+  //   console.log("Feedback: ", dataFeedMill);
+  // }, [handleDataSwitch]);
+
+  const getFeedData = async (source) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/${source}`);
+      const json = await response.json();
+      switch (source) {
+        case "cloud": {
+          setDataFeedCloud(json);
+          break;
+        }
+        case "lightning": {
+          setDataFeedLightning(json);
+          break;
+        }
+        case "mill": {
+          setDataFeedMill(json);
+          break;
+        }
+        default: {
+          console.log("No data pulled for ", source);
+        }
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleUpdate = (value) => {
+    return !value;
+  };
+
+  useEffect(() => {
+    getFeedData("cloud");
+    getFeedData("lightning");
+    getFeedData("mill");
+  }, [handleUpdate]);
 
   return (
     <React.Fragment>
@@ -101,7 +167,7 @@ function App() {
               <LLCCAppBar
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
-                dataFeed={dataFeed}
+                dataFeed={dataFeedMill}
                 ruleStatus={ruleStatus}
                 handleDataSwitch={handleDataSwitch}
                 handleInfo={handleInfo}
@@ -115,7 +181,9 @@ function App() {
                   path="/"
                   element={
                     <Home
-                      dataFeed={dataFeed}
+                      dataFeedCloud={dataFeedCloud}
+                      dataFeedLightning={dataFeedLightning}
+                      dataFeedMill={dataFeedMill}
                       ruleStatus={ruleStatus}
                       handleInfo={handleInfo}
                     />
@@ -124,6 +192,7 @@ function App() {
               </Routes>
             </main>
           </div>
+          <Button onClick={handleUpdate(true)}>Update</Button>
         </CssBaseline>
       </ThemeProvider>
     </React.Fragment>

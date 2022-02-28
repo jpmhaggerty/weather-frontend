@@ -19,7 +19,9 @@ const shortDefault = [
 ];
 
 export default function Home({
-  dataFeed = [],
+  dataFeedCloud = [],
+  dataFeedLightning = [],
+  dataFeedMill = [],
   ruleStatus = shortDefault,
   handleInfo,
 }) {
@@ -41,7 +43,9 @@ export default function Home({
         <Divider />
       </Container>
       <Container>
-        <StickyHeadTable dataFeed={dataFeed} />
+        <StickyHeadTable dataFeed={dataFeedCloud} />
+        <StickyHeadTable dataFeed={dataFeedLightning} />
+        <StickyHeadTable dataFeed={dataFeedMill} />
       </Container>
     </Box>
   );
