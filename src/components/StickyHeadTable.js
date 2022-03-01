@@ -10,9 +10,8 @@ import TableRow from "@mui/material/TableRow";
 
 let columns;
 let rows;
-let tableName = "Weather Data";
 
-export default function StickyHeadTable({ dataFeed }) {
+export default function StickyHeadTable({ dataFeed, tableName }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -55,7 +54,7 @@ export default function StickyHeadTable({ dataFeed }) {
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 800 }}>
+      <TableContainer sx={{ maxHeight: 400 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

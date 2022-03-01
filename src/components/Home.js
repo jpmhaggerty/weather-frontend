@@ -43,9 +43,12 @@ export default function Home({
         <Divider />
       </Container>
       <Container>
-        <StickyHeadTable dataFeed={dataFeedCloud} />
-        <StickyHeadTable dataFeed={dataFeedLightning} />
-        <StickyHeadTable dataFeed={dataFeedMill} />
+        <StickyHeadTable dataFeed={dataFeedCloud} tableName="Cloud Data" />
+        <StickyHeadTable
+          dataFeed={dataFeedLightning}
+          tableName="Lightning Data"
+        />
+        <StickyHeadTable dataFeed={dataFeedMill} tableName="Mill Data" />
       </Container>
     </Box>
   );

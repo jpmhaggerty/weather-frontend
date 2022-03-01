@@ -15,13 +15,13 @@ import Button from "@mui/material/Button";
 const axios = require("axios");
 
 const dataUrl = "http://localhost:3001/api/lightning";
-const dataUrlCloud = "http://localhost:3001/api/cloud/";
+const dataUrlCloud = "http://localhost:3001/api/cloud/all";
 const dataUrlCloudOn = "http://localhost:3001/data/cloud/on/";
 const dataUrlCloudOff = "http://localhost:3001/data/cloud/off/";
-const dataUrlLightning = "http://localhost:3001/api/lightning/";
+const dataUrlLightning = "http://localhost:3001/api/lightning/all";
 const dataUrlLightningOn = "http://localhost:3001/data/lightning/on/";
 const dataUrlLightningOff = "http://localhost:3001/data/lightning/off/";
-const dataUrlMill = "http://localhost:3001/api/mill/";
+const dataUrlMill = "http://localhost:3001/api/mill/all";
 const dataUrlMillOn = "http://localhost:3001/data/mill/on/";
 const dataUrlMillOff = "http://localhost:3001/data/mill/off/";
 
@@ -122,21 +122,32 @@ function App() {
   //   console.log("Feedback: ", dataFeedMill);
   // }, [handleDataSwitch]);
 
-  const getFeedData = async (source) => {
+  const getFeedData = (source) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/${source}`);
-      const json = await response.json();
+      const response = fetch(`http://localhost:3001/api/${source}/all`)
+        .then((response) => response.json)
+        .then((response) => {
+          if (response.status >= 400) {
+            throw new Error("Bad response from server");
+          } else {
+            response.data.sort((first, second) => first.number - second.number);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
       switch (source) {
         case "cloud": {
-          setDataFeedCloud(json);
+          setDataFeedCloud(response);
           break;
         }
         case "lightning": {
-          setDataFeedLightning(json);
+          setDataFeedLightning(response);
           break;
         }
         case "mill": {
-          setDataFeedMill(json);
+          setDataFeedMill(response);
           break;
         }
         default: {
@@ -148,15 +159,16 @@ function App() {
     }
   };
 
-  const handleUpdate = (value) => {
-    return !value;
-  };
+  const HandleUpdate = () =>
+    useCallback(() => {
+      getFeedData("cloud");
+      getFeedData("lightning");
+      getFeedData("mill");
+      // return !value;
+    });
 
-  useEffect(() => {
-    getFeedData("cloud");
-    getFeedData("lightning");
-    getFeedData("mill");
-  }, [handleUpdate]);
+  // useEffect(() => {
+  // }, [handleUpdate]);
 
   return (
     <React.Fragment>
@@ -192,7 +204,7 @@ function App() {
               </Routes>
             </main>
           </div>
-          <Button onClick={handleUpdate(true)}>Update</Button>
+          <Button onClick={HandleUpdate}>Update</Button>
         </CssBaseline>
       </ThemeProvider>
     </React.Fragment>

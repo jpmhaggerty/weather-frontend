@@ -11,115 +11,56 @@ export default function APIAdmin() {
   //test the urls and show results - to do
   //put the urls to the backend - check
 
-  const [dataUrlCloud, setDataUrlCloud] = useState();
-  const [dataUrlLightning, setDataUrlLightning] = useState();
-  const [dataUrlMill, setDataUrlMill] = useState();
-  const [periodCloud, setPeriodCloud] = useState();
-  const [periodLightning, setPeriodLightning] = useState();
-  const [periodMill, setPeriodMill] = useState();
+  const [dataFeed, setDataFeed] = useState({
+    number: 1,
+    cloudurl: "https://api.weather.gov/gridpoints/MLB/46,69/forecast",
+    cloudperiod: 10000,
+    lightningurl: "https://api.weather.gov/gridpoints/MLB/51,69/forecast",
+    lightningperiod: 10000,
+    millurl: "https://api.weather.gov/gridpoints/MLB/56,69/forecast",
+    millperiod: 10000,
+  });
 
   const handleTextChange = (event) => {
-    switch (event.target.name) {
-      case "cloud/url": {
-        setDataUrlCloud(event.target.value);
-        break;
-      }
-      case "cloud/period": {
-        setPeriodCloud(event.target.value);
-        break;
-      }
-      case "lightning/url": {
-        setDataUrlLightning(event.target.value);
-        break;
-      }
-      case "lightning/period": {
-        setPeriodLightning(event.target.value);
-        break;
-      }
-      case "mill/url": {
-        setDataUrlMill(event.target.value);
-        break;
-      }
-      case "mill/period": {
-        setPeriodMill(event.target.value);
-        break;
-      }
-      default: {
-        console.log("No data pulled for ", event.target.name);
-      }
-    }
+    setDataFeed({
+      ...dataFeed,
+      [event.target.name.split("/").join("")]: event.target.value,
+    });
   };
 
   const handleUpload = () => {
-    putAPIData("all/update");
+    putAPIData("url", "update");
   };
 
-  const putAPIData = async (source) => {
-    let payload = {
-      dataUrlMill: dataUrlMill,
-      periodMill: periodMill,
-      dataUrlCloud: dataUrlCloud,
-      periodCloud: periodCloud,
-      dataUrlLightning: dataUrlLightning,
-      periodLightning: periodLightning,
-    };
-
-    const response = await fetch(`http://localhost:3001/data/${source}`, {
-      method: "PUT",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+  const putAPIData = async (source, action) => {
+    const response = await fetch(
+      `http://localhost:3001/data/${source}/${action}`,
+      {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataFeed),
+      }
+    );
     const result = await response.json();
   };
 
-  const getAPIData = async (source) => {
+  const handleRefresh = () => {
+    getAPIData("all", "url");
+  };
+
+  const getAPIData = async (source, action) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/${source}`);
+      const response = await fetch(
+        `http://localhost:3001/api/${source}/${action}`
+      );
       const json = await response.json();
-      switch (source) {
-        case "cloud/url": {
-          setDataUrlCloud(json);
-          break;
-        }
-        case "cloud/period": {
-          setPeriodCloud(json);
-          break;
-        }
-        case "lightning/url": {
-          setDataUrlLightning(json);
-          break;
-        }
-        case "lightning/period": {
-          setPeriodLightning(json);
-          break;
-        }
-        case "mill/url": {
-          setDataUrlMill(json);
-          break;
-        }
-        case "mill/period": {
-          setPeriodMill(json);
-          break;
-        }
-        default: {
-          console.log("No data pulled for ", source);
-        }
-      }
+      setDataFeed({ ...json });
     } catch (error) {
       console.log("error", error);
     }
-  };
-
-  const handleRefresh = () => {
-    getAPIData("cloud/url");
-    getAPIData("cloud/period");
-    getAPIData("lightning/url");
-    getAPIData("lightning/period");
-    getAPIData("mill/url");
-    getAPIData("mill/period");
   };
 
   useEffect(() => {
@@ -138,13 +79,13 @@ export default function APIAdmin() {
       <Box>
         <CustomizedTextField
           name="cloud/url"
-          value={dataUrlCloud}
+          value={dataFeed.cloudurl}
           label="Cloud URL"
           handleTextChange={handleTextChange}
         />
         <CustomizedTextField
           name="cloud/period"
-          value={periodCloud}
+          value={dataFeed.cloudperiod}
           label="Cloud Period (ms)"
           handleTextChange={handleTextChange}
         />
@@ -152,13 +93,13 @@ export default function APIAdmin() {
       <Box>
         <CustomizedTextField
           name="lightning/url"
-          value={dataUrlLightning}
+          value={dataFeed.lightningurl}
           label="Lightning URL"
           handleTextChange={handleTextChange}
         />
         <CustomizedTextField
           name="lightning/period"
-          value={periodLightning}
+          value={dataFeed.lightningperiod}
           label="Lightning Period (ms)"
           handleTextChange={handleTextChange}
         />
@@ -166,13 +107,13 @@ export default function APIAdmin() {
       <Box>
         <CustomizedTextField
           name="mill/url"
-          value={dataUrlMill}
+          value={dataFeed.millurl}
           label="Mill URL"
           handleTextChange={handleTextChange}
         />
         <CustomizedTextField
           name="mill/period"
-          value={periodMill}
+          value={dataFeed.millperiod}
           label="Mill Period (ms)"
           handleTextChange={handleTextChange}
         />
